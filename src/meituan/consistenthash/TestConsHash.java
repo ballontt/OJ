@@ -26,12 +26,18 @@ public class TestConsHash {
         init();
 
         //添加节点
-        changeServer("192.168.10.5", 1);
-        changeServer("192.168.10.6", 1);
-        changeServer("192.168.10.7", 1);
+        addServer("192.168.10.5");
 
         //移除节点
-        changeServer("192.168.10.4", 0);
+        removeServer("192.168.10.4");
+
+        //循环更新节点
+        List<String> addServers = new LinkedList<String>();
+        addServers.add("192.168.10.6");
+        List<String> removeServers = new LinkedList<String>();
+        removeServers.add("192.168.10.5");
+        changeServer(addServers, removeServers);
+
     }
 
     public static void init() {
@@ -41,7 +47,7 @@ public class TestConsHash {
         }
 
         // 虚拟节点数少了，一致性hash无法保证分布的均匀
-        consistentHash = new ConsistentHash(serverNodes, 100);
+        consistentHash = new ConsistentHash(serverNodes, 200);
 
         // 产生10000个ip
         clientNodes = new LinkedList<>();
@@ -67,25 +73,33 @@ public class TestConsHash {
         }
     }
 
+    public static void addServer(String server) {
+        List<String> addServers = new LinkedList<String>();
+        addServers.add(server);
+        changeServer(addServers, null);
+    }
 
-    // 服务端服务器数量的变化，参数op，1:表示增加，0:表示减少
-    public static void changeServer(String server, int op) {
+    public static void removeServer(String server) {
+        List<String> removeServers = new LinkedList<String>();
+        removeServers.add(server);
+        changeServer(null, removeServers);
+    }
+
+
+    // 服务端服务器数量的变化
+    private static void changeServer(List<String> addServers, List<String>removeServers) {
         System.out.println("==========================================");
-        switch (op) {
-            case 1:
-                System.out.println("新增server:" + server);
-                serverNodes.add(server);
-                consistentHash.addNode(server);
-                break;
-            case 0:
-                System.out.println("移除server:" + server);
-                serverNodes.remove(server);
-                consistentHash.removeNode(server);
-                break;
-            default:
-                System.out.println("op code is err");
-
+        System.out.println("新增ip: " + addServers);
+        System.out.println("移除ip: " + removeServers);
+        if(addServers != null && !addServers.isEmpty()) {
+            serverNodes.addAll(addServers);
+            consistentHash.addNodeList(addServers);
         }
+        if(removeServers != null && !removeServers.isEmpty()) {
+            serverNodes.removeAll(removeServers);
+            consistentHash.removeNodeList(removeServers);
+        }
+
         //负载清0
         serverLoadMap.clear();
         for(String  tmpServer : serverNodes) {
@@ -119,21 +133,13 @@ public class TestConsHash {
         }
         clientServerMap = newClientServer;
 
-        switch (op) {
-            case 1:
-                System.out.println("ip 新增后，重新连接的连接数：" + connChangeNum);
-                System.out.println("ip 新增后，重新连接的客户端数：" + clientChangeNum);
-                break;
-            case 0:
-                System.out.println("ip 移除后，重新连接的连接数：" + connChangeNum);
-                System.out.println("ip 移除后，重新连接的客户端数：" + clientChangeNum);
-                break;
-            default:
-                System.out.println("op code is err");
-        }
+        System.out.println("server ip变更后，重新连接的连接数：" + connChangeNum);
+        System.out.println("server ip变更后，重新连接的客户端数：" + clientChangeNum);
+        System.out.println("");
         for(Map.Entry<String, Integer> entry : serverLoadMap.entrySet()) {
             System.out.println("Ip: " + entry.getKey() + ", " + "connection num:" + entry.getValue());
         }
+        System.out.println("");
     }
 
     // 一个客户端使用一致性hash产生三个不同的服务端

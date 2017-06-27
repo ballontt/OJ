@@ -49,6 +49,24 @@ public class ConsistentHash {
         return entry.getValue();
     }
 
+    public void addNodeList(List<String> servers) {
+        if(servers == null || servers.size() == 0) {
+            return;
+        }
+        for(String server : servers) {
+            addNode(server);
+        }
+    }
+
+    public void removeNodeList(List<String> servers) {
+        if(servers == null || servers.size() == 0) {
+            return;
+        }
+        for(String server : servers) {
+            removeNode(server);
+        }
+    }
+
     public void addNode(String node) {
         this.addNodesMap(node);
     }
