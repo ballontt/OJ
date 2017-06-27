@@ -7,13 +7,13 @@ import java.util.Random;
  */
 public class Util {
     public static String getIp() {
-        String minIpStr = "192.168.0.1";
-        String maxIpStr = "192.168.255.255";
+        String minIpStr = "192.0.0.1";
+        String maxIpStr = "192.255.255.255";
         int minIp = 1;
-        int maxIp = 255 * 256 + 255;
+        int maxIp = 255 * 256 * 256 + 255 * 256 + 255;
         Random r = new Random();
         int randomIp = r.nextInt(maxIp - minIp) + minIp;
-        String ip = "192.168." + String.valueOf(randomIp / 256) + "." + String.valueOf(randomIp % 256);
+        String ip = "192." + String.valueOf(randomIp / 256 / 256) + "." + String.valueOf((randomIp % (256 *256)) / 256) + "." + String.valueOf(randomIp % 256);
         return ip;
     }
 }

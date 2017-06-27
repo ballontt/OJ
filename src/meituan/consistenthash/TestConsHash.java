@@ -24,7 +24,13 @@ public class TestConsHash {
         serverNodes.add("192.168.10.4");
 
         init();
+
+        //添加节点
         changeServer("192.168.10.5", 1);
+        changeServer("192.168.10.6", 1);
+        changeServer("192.168.10.7", 1);
+
+        //移除节点
         changeServer("192.168.10.4", 0);
     }
 
