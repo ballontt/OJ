@@ -13,41 +13,46 @@ public class TestConsHash {
     private static LinkedList<String> serverNodes = null;
     private static LinkedList<String> clientNodes = null;
     private static HashMap<String, List<String>> clientServerMap = null;
-    private static int clientNum = 100000;
+    private static final int clientNum = 100000;
+    private static final int virtualNodeReplicas = 300;
+    private static final int redundancyNum = 3;
 
     public static void main(String[] args) {
 
+        int initServerNum = 3;
         serverNodes = new LinkedList<String>();
-        serverNodes.add("192.168.10.1");
-        serverNodes.add("192.168.10.2");
-        serverNodes.add("192.168.10.3");
-        serverNodes.add("192.168.10.4");
+        for(int i = 1; i <= initServerNum; i++) {
+            serverNodes.add("192.168.11." + i);
+        }
 
         init();
 
-        //添加节点
-        addServer("192.168.10.5");
+        // 添加节点
+        for(int i = 4; i <= 11; i++) {
+            addServer("192.168.10." + i);
+        }
 
-        //移除节点
-        removeServer("192.168.10.4");
 
-        //循环更新节点
-        List<String> addServers = new LinkedList<String>();
-        addServers.add("192.168.10.6");
-        List<String> removeServers = new LinkedList<String>();
-        removeServers.add("192.168.10.5");
-        changeServer(addServers, removeServers);
+        // 移除节点
+        //removeServer("192.168.10.4");
 
+        // 循环更新节点
+//        List<String> addServers = new LinkedList<String>();
+//        addServers.add("192.168.10.11");
+//        List<String> removeServers = new LinkedList<String>();
+//        removeServers.add("192.168.10.1");
+//        changeServer(addServers, removeServers);
     }
 
     public static void init() {
+        System.out.println("客户端数：" + clientNum + ", 虚拟节点数：" + virtualNodeReplicas + ", 客户端冗余连接数：" + redundancyNum);
         serverLoadMap = new HashMap<String, Integer>();
         for (String node : serverNodes) {
             serverLoadMap.put(node, 0);
         }
 
         // 虚拟节点数少了，一致性hash无法保证分布的均匀
-        consistentHash = new ConsistentHash(serverNodes, 200);
+        consistentHash = new ConsistentHash(serverNodes, virtualNodeReplicas);
 
         // 产生10000个ip
         clientNodes = new LinkedList<>();
@@ -57,10 +62,10 @@ public class TestConsHash {
             clientNodes.add(clientIp);
 
             // 客户端连接的三个服务端
-            List<String> serverIps = getThreeServer(clientIp);
+            List<String> serverIps = getMultiServer(clientIp, redundancyNum);
             clientServerMap.put(clientIp, serverIps);
 
-            //记录服务端的负载
+            // 记录服务端的负载
             for (String serverIp : serverIps) {
                 int load = serverLoadMap.get(serverIp);
                 serverLoadMap.put(serverIp, load + 1);
@@ -71,7 +76,9 @@ public class TestConsHash {
         for (Map.Entry<String, Integer> entry : serverLoadMap.entrySet()) {
             System.out.println("Ip: " + entry.getKey() + ", " + "connection num:" + entry.getValue());
         }
+        System.out.println("连接数的标准差：" + calcStdDeviation());
     }
+
 
     public static void addServer(String server) {
         List<String> addServers = new LinkedList<String>();
@@ -100,7 +107,7 @@ public class TestConsHash {
             consistentHash.removeNodeList(removeServers);
         }
 
-        //负载清0
+        // 负载清0
         serverLoadMap.clear();
         for(String  tmpServer : serverNodes) {
             serverLoadMap.put(tmpServer, 0);
@@ -110,7 +117,7 @@ public class TestConsHash {
         int clientChangeNum = 0;
         HashMap<String, List<String>> newClientServer = new HashMap<String, List<String>>();
         for(String client : clientNodes) {
-            List<String> newServers = getThreeServer(client);
+            List<String> newServers = getMultiServer(client, redundancyNum);
             newClientServer.put(client, newServers);
 
             List<String> oldServers = clientServerMap.get(client);
@@ -125,7 +132,7 @@ public class TestConsHash {
                 }
             }
 
-            //记录服务端的负载
+            // 记录服务端的负载
             for(String serverIp : newServers) {
                 int load = serverLoadMap.get(serverIp);
                 serverLoadMap.put(serverIp, load+1);
@@ -133,35 +140,40 @@ public class TestConsHash {
         }
         clientServerMap = newClientServer;
 
-        System.out.println("server ip变更后，重新连接的连接数：" + connChangeNum);
-        System.out.println("server ip变更后，重新连接的客户端数：" + clientChangeNum);
+        System.out.println("server ip变更后，重新连接的连接数：" + connChangeNum + "（" + (int)((float)connChangeNum/(clientNum * redundancyNum) * 100) + "%）");
+        System.out.println("server ip变更后，重新连接的客户端数：" + clientChangeNum + "（" + (int)((float)clientChangeNum / clientNum * 100) + "%）");
         System.out.println("");
         for(Map.Entry<String, Integer> entry : serverLoadMap.entrySet()) {
             System.out.println("Ip: " + entry.getKey() + ", " + "connection num:" + entry.getValue());
         }
+        System.out.println("连接数的标准差：" + calcStdDeviation());
         System.out.println("");
     }
 
-    // 一个客户端使用一致性hash产生三个不同的服务端
-    public static List<String> getThreeServer(String client) {
-        String client01 = client + "#" + "1";
-        String client02 = client + "#" + "2";
-        String client03 = client + "#" + "3";
-        String server01 = consistentHash.getNode(client01);
-        String server02 = consistentHash.getNode(client02);
-        while(server01.equals(server02)) {
-            server02 = consistentHash.reGetNode(server02);
-        }
-        String server03 = consistentHash.getNode(client03);
-        while(server03.equals(server01) || server03.equals(server02)) {
-            server03 = consistentHash.reGetNode(server03);
+    // 一个客户端使用一致性hash产生多个不同的服务端
+    public static List<String> getMultiServer(String client, int redundancyNum) {
+        if(redundancyNum < 1) {
+            return null;
         }
 
         List<String> servers = new LinkedList<String>();
-        servers.add(server01);
-        servers.add(server02);
-        servers.add(server03);
-
+        for(int i = 0; i < redundancyNum; i++) {
+            String clientid = client + "#" + i;
+            String server = consistentHash.getNode(clientid);
+            while(servers.contains(server)) {
+                server = consistentHash.reGetNode(server);
+            }
+            servers.add(server);
+        }
         return servers;
+    }
+
+    private static int calcStdDeviation() {
+        int avgConnServer = clientNum * redundancyNum / serverNodes.size();
+        int sum = 0;
+        for(Map.Entry<String, Integer> entry : serverLoadMap.entrySet()) {
+            sum += (entry.getValue() - avgConnServer) * (entry.getValue() - avgConnServer);
+        }
+        return (int)Math.sqrt(sum / serverNodes.size());
     }
 }
