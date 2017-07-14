@@ -224,7 +224,9 @@ public class TestConsHash {
     // 使用轮训的方法获得一个连接
     private static String getOneForLongRequest(String client, List<String> serverIps) {
         // 在这里再次使用一致性hash方法
-        return serverIps.get(2);
+        long i = System.currentTimeMillis();
+        Random r = new Random(i);
+        return serverIps.get(r.nextInt(serverIps.size()));
     }
 
 }
