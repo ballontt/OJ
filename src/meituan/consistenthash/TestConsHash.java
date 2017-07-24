@@ -18,16 +18,16 @@ public class TestConsHash {
     private static LinkedList<String> clientNodes = null;
     private static HashMap<String, List<String>> client2ConnServers = null;
     private static HashMap<String, String> client2RequestServer = null;
-    private static final int clientNum = 100000;
+    private static final int clientNum = 90000;
     private static final int virtualNodeReplicas = 300;
     private static final int redundancyNum = 3;
 
     public static void main(String[] args) {
 
-        int initServerNum = 10;
+        int initServerNum = 9;
         serverNodes = new LinkedList<String>();
         for(int i = 1; i <= initServerNum; i++) {
-            serverNodes.add("192.168.11." + i);
+            serverNodes.add("192.168.11." + i + ":4444");
         }
 
         init();
@@ -39,11 +39,11 @@ public class TestConsHash {
         //removeServer("192.168.11.4");
 
         // 循环更新节点
-        List<String> addServers = new LinkedList<String>();
-        addServers.add("192.168.11.11");
-        List<String> removeServers = new LinkedList<String>();
-        removeServers.add("192.168.11.1");
-        changeServer(addServers, removeServers);
+//        List<String> addServers = new LinkedList<String>();
+//        addServers.add("192.168.11.11");
+//        List<String> removeServers = new LinkedList<String>();
+//        removeServers.add("192.168.11.1");
+//        changeServer(addServers, removeServers);
     }
 
     public static void init() {

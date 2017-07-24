@@ -6,6 +6,9 @@ import java.util.zip.CRC32;
 
 /**
  * Created by ballontt on 2017/6/26.
+ *
+ * 算法实现中的hash算法使用crc32算法做为hash函数，但是这个函数的均匀性并不好，
+ * 在处理负载均衡问题时，murmurHash算法是一种更为合适的算法，具有良好的分布性。
  */
 public class ConsistentHash {
     // 存储虚拟节点的hash value和真实节点的对应关系
