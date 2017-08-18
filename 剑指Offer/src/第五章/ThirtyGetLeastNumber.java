@@ -27,4 +27,62 @@ public class ThirtyGetLeastNumber {
         ArrayList<Integer> result = new ArrayList<Integer>(kMinSet);
         return result;
     }
+
+
+    // 使用快排中的分区
+    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+
+        if(input == null || k<= 0 || k > input.length){
+            return result;
+        }
+
+        if(input.length == k) {
+            for(int i = 0; i < k; i++) {
+                result.add(input[i]);
+            }
+            return result;
+        }
+
+        int index = partition(input, 0, input.length - 1);
+        int start = 0;
+        int end = input.length - 1;
+        while(index != k) {
+            if(index > k - 1) {
+                end = index - 1;
+                index = partition(input, start, end);
+            } else{
+                start = index + 1;
+                index = partition(input, start, end);
+            }
+        }
+
+        for(int i = 0; i < k; i++) {
+            result.add(input[i]);
+        }
+        return result;
+
+    }
+
+    public int partition(int[] input, int begin, int end) {
+        int left = begin;
+        int right = end;
+        int tmp = input[begin];
+        while(left < right) {
+            while(left < right && input[right] >= tmp) {
+                right--;
+            }
+            if (left < right) {
+                input[left++] = input[right];
+            }
+            while(left < right && input[left] < tmp) {
+                left++;
+            }
+            if(left < right) {
+                input[right--] = input[left];
+            }
+        }
+        input[left] = tmp;
+        return left;
+    }
 }

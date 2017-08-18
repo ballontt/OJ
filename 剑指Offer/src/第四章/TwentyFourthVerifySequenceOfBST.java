@@ -25,7 +25,7 @@ public class TwentyFourthVerifySequenceOfBST {
             if(sequence[j] < root)
                 return false;
         }
-        return (Verify(sequence,0,i-1)&&Verify(sequence,i,right-1));
+        return (Verify(sequence,left,i-1)&&Verify(sequence,i,right-1));
     }
 
 }

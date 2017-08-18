@@ -9,6 +9,7 @@ import java.util.LinkedList;
 public class FourtyFiveLastRemaining {
     public int LastRemaining(int n, int m) {
         LinkedList<Integer> list  = new LinkedList<Integer>();
+        LinkedList<Integer> list2  = new LinkedList<Integer>();
         for(int i=0; i<n; i++)
             list.add(i);
         int index = 0;

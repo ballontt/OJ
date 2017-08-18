@@ -47,12 +47,11 @@ public class FourReplaceSpace {
             }
         }
         return str.toString();
-
     }
+
 
     public static void main(String[] args) {
         System.out.println(replaceSpace("we are haapy."));
         System.out.println(replaceSpace("  "));
     }
-
 }
