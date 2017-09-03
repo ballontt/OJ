@@ -28,4 +28,31 @@ public class FourtyThreeNTouzi {
         test.printProbability(10);
     }
 
+    public static void printAll(int n) {
+        int[] num1 = new  int[6*n+1];
+        int[] num2 = new  int[6*n+1];
+
+        for (int i = 1; i <= 6; i++) {
+            num1[i] = 1;
+        }
+        for(int i = 2; i <=n; i++) {
+            for(int j = i; j <= 6*i; j++) {
+                int k = j - 6;
+                if (k < i -1) {
+                    k = i - 1;
+                }
+                for(; k<j; k++) {
+                    num2[j] += num1[k];
+                }
+            }
+            System.arraycopy(num2, i, num1, i, 5*i);
+        }
+        double total = Math.pow(6, n);
+
+        for (int i = n; i <= 6 * n; i++) {
+            System.out.printf("%d : %f\n", i, num1[i]/total);
+        }
+
+    }
+
 }

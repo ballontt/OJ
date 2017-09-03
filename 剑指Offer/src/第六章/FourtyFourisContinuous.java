@@ -71,5 +71,4 @@ public class FourtyFourisContinuous {
             System.out.println(a[i]);
         }
     }
-
 }
