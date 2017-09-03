@@ -5,7 +5,6 @@ import meituan.consistenthash.ConsistentHash;
 
 import java.util.*;
 
-import static meituan.consistenthash.TestConsHash.getThreeServer;
 
 /**
  * Created by ballontt on 2017/6/26.
