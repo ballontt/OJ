@@ -11,6 +11,9 @@ public class Main {
         Thread produc1 = new Thread(new Producer(f));
         Thread produc2 = new Thread(new Producer(f));
         Thread produc3 = new Thread(new Producer(f));
+        List<Integer> a = new LinkedList<Integer>();
+        a.a
+
 
         Thread customer1 = new Thread(new Customer(f, 1));
         Thread customer2 = new Thread(new Customer(f, 1));

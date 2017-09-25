@@ -1,6 +1,7 @@
 package 查找;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * Created by ballontt on 2017/9/12.
@@ -27,6 +28,8 @@ public class Combinations {
             A[i] = i;
         }
         getAllCombine(A, 0, k);
+        LinkedHashMap<Integer, Integer> a = new LinkedHashMap<Integer, Integer>();
+        a.put(1,1);
         return res;
 
     }
