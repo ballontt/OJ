@@ -1,13 +1,33 @@
+import ProducerAndConsumoter.Customer;
+import ProducerAndConsumoter.Factory;
+import ProducerAndConsumoter.Producer;
 
-import java.util.LinkedList;
-
+/**
+ * Created by ballontt on 2017/9/8.
+ */
 public class Main {
-
-    /**
-     * 打印二叉树从根节点到叶子节点的所有路径
-     */
     public static void main(String[] args) {
-        String s = "abc";
-        System.out.println(s.substring(1,3));
+        Factory f = new Factory(3);
+        Thread produc1 = new Thread(new Producer(f));
+        Thread produc2 = new Thread(new Producer(f));
+        Thread produc3 = new Thread(new Producer(f));
+        List<Integer> a = new LinkedList<Integer>();
+        a.a
+
+
+        Thread customer1 = new Thread(new Customer(f, 1));
+        Thread customer2 = new Thread(new Customer(f, 1));
+        Thread customer3 = new Thread(new Customer(f, 1));
+
+        produc1.start();
+        produc2.start();
+        produc3.start();
+
+        customer1.start();
+        customer2.start();
+        customer3.start();
+
+
     }
+
 }
