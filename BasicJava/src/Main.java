@@ -2,6 +2,9 @@ import ProducerAndConsumoter.Customer;
 import ProducerAndConsumoter.Factory;
 import ProducerAndConsumoter.Producer;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by ballontt on 2017/9/8.
  */
@@ -12,7 +15,6 @@ public class Main {
         Thread produc2 = new Thread(new Producer(f));
         Thread produc3 = new Thread(new Producer(f));
         List<Integer> a = new LinkedList<Integer>();
-        a.a
 
 
         Thread customer1 = new Thread(new Customer(f, 1));

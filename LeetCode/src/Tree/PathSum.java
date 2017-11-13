@@ -1,5 +1,7 @@
 package Tree;
 
+import sun.reflect.generics.tree.Tree;
+
 /**
  * Created by ballontt on 2017/8/17.
  *
@@ -18,7 +20,7 @@ package Tree;
  * return true, as there exist a root-to-leaf path5->4->11->2which sum is 22.
  */
 public class PathSum {
-    public boolean hasPathSum(TreeNode root, int sum) {
+    public boolean hasPathSum(Tree.TreeNode root, int sum) {
         if(root == null) {
             return false;
         }

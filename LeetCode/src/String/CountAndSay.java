@@ -16,28 +16,26 @@ package String;
 public class CountAndSay {
     public String countAndSay(int n) {
         String s = "1";
-        while(--n > 0) {
-            StringBuffer sb = new StringBuffer();
-            int count = 0;
-            char num = '1';
-            for(int i = 0; i <= s.length(); i++) {
-                if(i == s.length()) {
-                    sb.append(String.valueOf(count));
-                    sb.append(num);
-                } else {
-                    if(s.charAt(i) != num) {
-                        sb.append(String.valueOf(count));
-                        sb.append(num);
-                        count = 1;
-                        num = s.charAt(i);
-                    } else {
-                        count++;
-                    }
-                }
+        for(int i = 1; i < n; i++) {
 
+            StringBuffer sb = new StringBuffer();
+            char c = s.charAt(0);
+            int count = 0;
+            for(int j = 0; j < s.length(); j++) {
+                if(s.charAt(j) == c) {
+                    count++;
+                } else {
+                    sb.append(String.valueOf(count));
+                    sb.append(c);
+                    c = s.charAt(j);
+                    count = 1;
+                }
             }
+            sb.append(String.valueOf(count));
+            sb.append(c);
             s = sb.toString();
         }
+
         return s;
     }
 

@@ -40,11 +40,11 @@ public class BinaryTreeMaxPathSum {
     }
 }
 
-class TreeNode1 {
+class TreeNode {
     int val;
-    TreeNode1 left;
-    TreeNode1 right;
-    public TreeNode1(int val) {
+    TreeNode left;
+    TreeNode right;
+    public TreeNode(int val) {
         this.val = val;
     }
 }
